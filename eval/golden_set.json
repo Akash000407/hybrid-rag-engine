@@ -1,0 +1,48 @@
+{
+  "retrieval_cases": [
+    {
+      "id": "Q1_supple_slang",
+      "query": "explain the supple rule and max backlog limit",
+      "expected_terms": ["supplementary", "five", "05"]
+    },
+    {
+      "id": "Q2_attendance_dr",
+      "query": "what happens if attendance is below 75 percent",
+      "expected_terms": ["75%", "DR", "Summer-Term"]
+    },
+    {
+      "id": "Q3_summer_term",
+      "query": "who can register for summer term courses",
+      "expected_terms": ["Summer", "de-registered", "failed"]
+    },
+    {
+      "id": "Q4_grading_table",
+      "query": "what are the letter grades and grade points in the grading system",
+      "expected_terms": ["grade point", "10", "F"]
+    },
+    {
+      "id": "Q5_branch_change",
+      "query": "minimum CGPA and eligibility for branch change after first year",
+      "expected_terms": ["change of branch", "CGPA"]
+    },
+    {
+      "id": "Q6_cgpa_percentage",
+      "query": "how is percentage calculated from CGPA and what is first class",
+      "expected_terms": ["CGPA", "percentage", "first class"]
+    },
+    {
+      "id": "Q7_year_lag_slang",
+      "query": "what is the year lag rule for promotion to next year",
+      "expected_terms": ["promoted", "repeat", "backlog"]
+    },
+    {
+      "id": "Q8_programme_duration",
+      "query": "what is the normal and maximum duration of the BTech programme",
+      "expected_terms": ["duration", "BTech", "years"]
+    }
+  ],
+  "hallucination_traps": [
+    "What is the monthly hostel mess fee according to this ordinance?",
+    "What is the dress code for the annual convocation ceremony?"
+  ]
+}

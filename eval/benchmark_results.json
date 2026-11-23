@@ -1,0 +1,35 @@
+{
+  "top_k": 4,
+  "retrieval": {
+    "vector": {
+      "hit_at_4": 100.0,
+      "mrr": 0.76,
+      "avg_latency_ms": 166.06
+    },
+    "hybrid": {
+      "hit_at_4": 100.0,
+      "mrr": 0.875,
+      "avg_latency_ms": 170.58
+    },
+    "hybrid_rerank": {
+      "hit_at_4": 100.0,
+      "mrr": 0.75,
+      "avg_latency_ms": 470.58
+    }
+  },
+  "hallucination_traps": {
+    "rejection_rate_pct": 100.0,
+    "details": [
+      {
+        "query": "What is the monthly hostel mess fee according to this ordinance?",
+        "rejected_hallucination": true,
+        "answer": "I could not find this in the document."
+      },
+      {
+        "query": "What is the dress code for the annual convocation ceremony?",
+        "rejected_hallucination": true,
+        "answer": "I could not find this in the document."
+      }
+    ]
+  }
+}

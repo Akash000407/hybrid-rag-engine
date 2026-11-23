@@ -1,0 +1,33 @@
+# Secrets & Environment Variables (NEVER commit these)
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Local Databases, Caches & Model Weights
+chroma_db/
+chroma_db_v2/
+data_index/
+flashrank_cache/
+*.db
+*.sqlite3
+
+# Python Bytecode & Logs
+__pycache__/
+*.py[cod]
+logs/
+*.log
+
+# OS & Editor Junk
+.DS_Store
+Thumbs.db
+.vscode/
+
+# test output
+test_output/
+.pytest_cache/
