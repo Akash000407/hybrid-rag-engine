@@ -16,6 +16,8 @@ st.set_page_config(
 
 @st.cache_resource
 def load_pipeline() -> RAGPipeline:
+    if not config.CHUNKS_PATH.exists():
+        sync_documents()
     return RAGPipeline()
 
 

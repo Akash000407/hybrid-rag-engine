@@ -117,7 +117,10 @@ class RAGPipeline:
             ttft_ms: float | None = None
             last_error: Exception | None = None
 
+            completed = False
+
             for model_name, think_level in config.MODEL_FALLBACK_CHAIN:
+                model_chunks: list[str] = []
                 try:
                     stream = self.client.models.generate_content_stream(
                         model=model_name,
@@ -135,24 +138,53 @@ class RAGPipeline:
                             if ttft_ms is None:
                                 ttft_ms = (time.perf_counter() - start) * 1000
                                 meta["ttft_ms"] = round(ttft_ms, 2)
-                            full_chunks.append(chunk.text)
+                            model_chunks.append(chunk.text)
                             yield chunk.text
 
-                    if full_chunks:
+                    if model_chunks:
+                        full_chunks = model_chunks
                         meta["model_used"] = model_name
+                        completed = True
                         break
 
                 except errors.APIError as exc:
                     code = getattr(exc, "code", None)
-                    # Auth/permission errors should fail loudly, not silently fall back
                     if code in (400, 401, 403):
                         logger.error("Fatal Gemini API error (%s): %s", code, exc)
                         raise
+                    if model_chunks:
+                        logger.error("Stream interrupted mid-response on %s: %s", model_name, exc)
+                        last_error = exc
+                        break  # Never concatenate a second model onto partial output
                     logger.warning("Model %s unavailable (%s); trying fallback.", model_name, code)
                     last_error = exc
                 except Exception as exc:
+                    if model_chunks:
+                        logger.error("Stream interrupted mid-response on %s: %s", model_name, exc)
+                        last_error = exc
+                        break
                     logger.warning("Unexpected error on %s: %s", model_name, exc)
                     last_error = exc
+
+            total_ms = (time.perf_counter() - start) * 1000
+            meta["total_ms"] = round(total_ms, 2)
+
+            if completed and full_chunks:
+                full_answer = "".join(full_chunks)
+                if use_cache:
+                    self.cache.set(query, mode, full_answer, meta["sources"], meta["model_used"])
+                self.cache.log_telemetry(
+                    query,
+                    mode,
+                    False,
+                    meta["retrieval_ms"],
+                    meta["ttft_ms"],
+                    meta["total_ms"],
+                    meta["model_used"],
+                )
+            elif last_error and not completed:
+                logger.error("Generation failed. Last error: %s", last_error)
+                yield "\n\n[Stream interrupted. Please retry.]"
 
             total_ms = (time.perf_counter() - start) * 1000
             meta["total_ms"] = round(total_ms, 2)
